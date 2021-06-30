@@ -1,0 +1,120 @@
+
+app.get("/test",(request,response)=>{
+   return response.send("Olá NLW!")
+})
+
+app.post("/test-post", (request, response)=>{
+
+  //request = Entrando
+  //response = saindo  
+    return response.send("Olá NLW método Post.")
+})
+
+
+
+
+GET = Busca uma informação
+POST = Inserir (criar) uma informação
+PUT = Alterar uma informação
+DELETE = Remover um dado
+PATCH = Alterar uma informação específica 
+*/
+
+/* 
+*Tipos de parâmetros
+ - Routes Params => Parâmetros que fazem parte de nossa rota (http://localhost:3000/produtos/784848181). Dentro do express, colocamos os parâmetro entre {}. 
+ 
+ ex: 
+    app.get("/test"{id},(request,response)=>{
+    const id = request.params.id;
+}
+ 
+ - Query Params => Utilizamos quando queremos fazer um filtro em uma query.
+ ex:
+    (http://localhost:3000/produtos?name=teclado&descritption=teclado_preto&...). 
+    
+    - Eles não veem descritos na rota, por não serem parâmtros obrigatorios.
+
+
+
+ - Body Params => Parâmetros que veem no corpo da requisição. 
+ 
+ ex no formato JSON:
+    {
+        "name":"teclado",
+        "descritption":"teclado_preto"
+    }
+
+    Ele não é usado em método GET, somente em POST, PUT e PATCH.
+
+
+
+
+***************
+
+Formas de usar o Banco de dados
+ 
+*Diretamente pelo driver: (SQL Server, MySQL, Postgree, MariaDD...)
+    Forma mais "mão na massa".
+    Usa os rescursos nativos do Banco. 
+    Usamos querys como "select", "insert into", "delete", "update".
+    
+    Problema: Cada drive que tem suas próprias nuances desses comandos.
+
+*Query Builders: (Knex.js...)
+    Permite que escrevamos as nossas querys de forma menos "root" ou "mão na massa", se comparada ao drive.
+    Estrutura básica mais global para todos os bancos, oferecendo suporte às pequenas diferenças entre eles.
+    Ainda exige o lançamenteo de algumas informações manualmente.
+
+*ORMs - Object Relational Mapper: (Sequelize, TypeORM, Prisma...)
+    Frameworks que ajudam no mapeamento entre a entidade e o objeto. Pega o nosso código em JavaScript e transforma em uma forma que o Banco consiga entender.
+    Menos "mão na massa", conseguimos automatizar inserções, o select...
+    Transforma a entidade ou objeto para uma forma que o banco consiga reconehcer uma classe como sendo uma tabela com seus respectivos campos.
+
+Quando utilizamos o conceito de ORM, temos um repositório que funciona como um gerenciador de nossa entidade no banco, que faz todo o trabalho pra nós. Diferentemente do Knex.js ou do próprio drive, temos aqui métodos já definidos, como findOne() - Um "select" para buscar o primeiro item de uma tabela, o save() - funciona como um "insert"...
+
+***************
+
+
+
+# Arquitetura do projeto - Camadas
+
+*repositories* --> Camada responsável pela manipulação e buscas de dados e conexão com banco.
+
+    [TagsRepositories.ts, UsersRepositories.ts]
+
+
+*services* --> Tudo o que for referente às funcionalidades como validações, verificações, regras de negócio, conceitos entre outros.
+    
+    [CreateUserService.ts, CreateTagService.ts]
+
+
+*controllers* --> Camada de transições de informações. Recebe requisições do request, passa para o service e recebe dele alguma coisa para o response.
+
+    [CreateTagController.ts, CreateUserControllers.ts]
+
+
+*middlewares* --> Funcionalidades criadas para agir entre o request <--> response conforme uma situação específica.  
+
+    [ensureAdmin.ts]
+
+
+*entities* --> Classes que vão ter as referências para os bancos.
+
+    [Tag.ts, User.ts]
+
+
+
+# FLUXO
+
+1º server.ts(recebe requsição) --> 
+
+    - middlewares
+
+2º (passa para o controller ) --> 
+
+3º SERVICE --> 
+
+4º Repositories --> 
+
+5º Banco de Dados
